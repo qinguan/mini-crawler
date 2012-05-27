@@ -5,95 +5,110 @@ import time
 import threading
 import urllib2
 import BeautifulSoup
+from DatabaseOperator import *
+from Utils import *
+import pdb
+pdb.set_trace
 
 class Crawler(threading.Thread):
-    def __init__(self,queue,depth,db_operator,logger):
+    def __init__(self,task_queue,result_queue,keyword,depth,logger):
         threading.Thread.__init__(self)
-        self.queue = queue
-        self.depth = depth
-        self.context = None # the return value of urllib2.urlopen() function
-        self.db_operator = db_operator
-        self.logger = logger
+        self.task_queue   = task_queue
+        self.result_queue = result_queue
+        self.keyword      = keyword
+        self.depth        = depth
+        self.context      = None # the return value of urllib2.urlopen() function
+        self.logger       = logger
+        self.db_operator  = DatabaseOperator(self.logger)
         self.start()
         
     def run(self):
         while True:
-            if self.queue.empty():
+            if self.task_queue.empty():
                 break
-            task = self.queue.get()
+            task = self.task_queue.get()
+            
             # do something
             self.analyse_page(task)
-            self.logger.info(self.getName() + ': analysing ' + task[0])
+            #self.logger.info(self.getName() + ': analysing ' + task[0] + ' depth= ' + str(task[1]))
+            try:
+                print self.getName() + ': analysing ' + task[0].encode('UTF-8') + ' depth= ' + str(task[1])
+            except:
+                print 'encode error.'
             
-            self.queue.task_done()
+            self.task_queue.task_done()
+        self.logger.info(self.getName() + ' finished tasks and exit.')
     
-    def is_legal_url(self,url):
-        try:
-            self.context = urllib2.urlopen(url).read()
-            return True
-        except:
-            return False
+    def extract_text(self,soup):
+        '''
+        extract all text on html body in given html page.
+        '''
+        if getattr(soup,'body'):
+            text = ' '.join([_ for _ in soup.body(text=True)])
+            return text#.encode(soup.originalEncoding)
     
-    def is_indexed(self,url):
+    def is_page_has_keyword(self,text,default_occurrence_number=1):
         '''
-        if indexed, return True else False.
+        if key word appears one time in text, the text is treat as a page satisfied key word.
         '''
-        res = self.db_operator.query_url(url)
-        if res:
-            return not len(res) == 0
-        return False
-    
-    def add_url(self,url,text):
-        '''
-        add a url with link text to the database.
-        '''
-        try:
-            if self.db_operator.insert_url(url,text):
-                self.logger.info('add ' + url)
-            else:
-                self.logger.error('can not add ' + url + ' to database.')
-        except:
-            pass
-    
+        import re
+        patten = re.compile(self.keyword.lower())
+        return len(patten.split(text)) >= default_occurrence_number
+        
     def analyse_page(self,page_url_with_depth):
         '''
         page_url_with_depth = (url,depth)
         '''
+        url   = page_url_with_depth[0]
+        depth = page_url_with_depth[1]
         
-        if not self.is_legal_url(page_url_with_depth[0]):
-            return 
+        try:
+            self.context = safe_decode(urllib2.urlopen(url.encode('UTF-8')).read())
+        except:
+            self.logger.error('can not open the ' + url)
+            
+        if self.context:
+            try:
+                soup = BeautifulSoup.BeautifulSoup(self.context)
+                if not soup:
+                    return 
+            except:
+                return
+            
+            # analyse the current page whether includes keyword or not,if yes,store it into result_queue.
+            page_text = self.extract_text(soup)
+            if page_text and self.is_page_has_keyword(page_text):
+                self.result_queue.put((url,page_text))
         
-        if self.is_indexed(page_url_with_depth[0]):
-            return
-       
-        soup = BeautifulSoup.BeautifulSoup(self.context)
-        links = soup('a')
-        
-        for link in links:
-            if 'href' in dict(link.attrs) and link['href'][0:4] == 'http':
-                # del the navigation location flag
-                url = link['href'].split('#')[0] 
-                
-                # del the '/' eg. http://www.baidu.com/ ==> http://www.baidu.com
-                url = url.strip('/') 
-                
-                # the url's depth is small the given depth and the url is not stored in db.
-                if page_url_with_depth[1] < self.depth and not self.is_indexed(url):
-                    self.queue.put((url,page_url_with_depth[1]+1))
-                    self.add_url(url,link.text)
-    
-    def extract_text(self,soup):
-        '''
-        extract all text on given html page.
-        '''
-        text = [_ for _ in soup.body(text=True)]
-        return ' '.join(text).encode(soup.originalEncoding)
-    
-    def is_page_meet_keyword(text,keyword,default_occurrence_number=5):
-        '''
-        if key word appears five times in text, the text is treat as a page satisfied key word.
-        '''
-        import re
-        patten = re.compile(keyword)
-        return len(patten.split(text)) >= default_occurrence_numbers
-        
+            # analyse the current page and extract all urls.
+            links = soup('a')
+            for link in links:
+                if 'href' in dict(link.attrs) and link['href'][0:4] == 'http':
+                    # del the navigation location flag
+                    url = link['href'].split('#')[0] 
+                    
+                    # del the '/' eg. http://www.baidu.com/ ==> http://www.baidu.com
+                    url = url.strip('/') 
+                    
+                    # the url's depth is small than the given depth.
+                    if page_url_with_depth[1] < self.depth:# and not self.is_indexed(url):
+                        self.task_queue.put((url,page_url_with_depth[1]+1))
+                    
+if __name__ == '__main__':
+    import Queue
+    from Utils import *
+    from DatabaseOperator import *
+    logger = set_log()
+    task = Queue.Queue()
+    result = Queue.Queue()
+    task.put(('http://www.sina.com.cn',0))
+    crawler = Crawler(task,result,'Rights',1,logger)
+    task.join()
+    print 'task done.'
+    while True:
+        if result.empty():
+            break
+        res = result.get()
+        print res
+        result.task_done()
+    exit()
