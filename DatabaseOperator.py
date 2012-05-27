@@ -26,7 +26,7 @@ class DatabaseOperator():
 
     def insert_url(self,url,text=''):
         try:
-            ins_url = self.urls_table.insert().values(url = url, text = text)
+            ins_url = self.urls_table.insert().values(url = url.encode('UTF-8'), text = text.encode('UTF-8'))
             self.db_connect.execute(ins_url)
             #print 'insert %s %s ok' % (url,text)
             #self.logger.info('insert ' + url + ' ' + text + ' ok.')
@@ -57,11 +57,21 @@ class DatabaseOperator():
         
 if __name__ == '__main__':
     from Utils import *
-    logger = init_log()
+    logger = set_log()
     dbOp = DatabaseOperator(logger)
     dbOp.init_database('crawler.db')
-    #dbOp.insert_url('http://www.baidu.com','baidu')
     res = dbOp.query_all()
+    print len(res)
+    for i in res:
+        print i
+    print dbOp.insert_url('http://www.baidu.com','baidu')
+    print dbOp.insert_url('http://www.baidu.com1','baidu1')
+    dbOp.insert_url('http://www.baidu.com2','baidu2')
+    dbOp.insert_url('http://www.baidu.com3','baidu3')
+    dbOp.insert_url('http://www.baidu.com4','baidu4')
+    dbOp.insert_url('http://www.baidu.com5','baidu5')
+    res = dbOp.query_all()
+    print len(res)
     for i in res:
         print i
     #print dbOp.insert_url('http://www.baidu.com','baidu')
