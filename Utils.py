@@ -7,7 +7,7 @@ import logging
 
 def set_log(loglevel = logging.INFO, logfile = 'crawler.log'):
     '''
-    output log to logfile.
+    output log to a logfile.
     '''
     #test
     import os 
