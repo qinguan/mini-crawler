@@ -53,6 +53,7 @@ def extract_link_from__page(url):
         context = urllib2.urlopen(url).read()
     except:
         print 'can not open %s' % url
+        return
         
     result = []
     soup = BeautifulSoup.BeautifulSoup(safe_decode(context))
@@ -93,24 +94,36 @@ def set_optparse():
     (options, args) = parser.parse_args()
     return options, args
 
+def get_url_hashmd5(url):
+    import hashlib
+    return hashlib.md5(url).hexdigest()
+
+def compress_text(text):
+    import zlib
+    return zlib.compress(text)
+
+def decompress_text(zlib_text):
+    import zlib
+    return zlib.decompress(unicode(zlib_text,'UTF-8'))
+    
+#test:
 def test():
     print 'ok'
-    
-def monitor(fun):
-    from threading import Timer
-    import time
-    time.sleep(5)
-    while True:
-        Timer(10,fun).start()
-        
-#test:
+
 if __name__ == '__main__':
-    import threading
-    print threading.activeCount()
-    monitor(test())
-    print threading.activeCount()
+    from threading import Timer
+
+    #monitor(test)
+    
     #logger = init_log()
     #logger.error('KKKKKKK')
     #print extract_link_from__page('http://www.baidu.com')
         
+    def test_set_log():
+        logger = set_log()
+        logger.debug('Debug')
+        logger.info('info')
+        logger.warning('warning')
+        logger.error('error')
+        logger.critical('critical')
     
