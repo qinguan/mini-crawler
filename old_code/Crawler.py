@@ -45,15 +45,7 @@ class Crawler(threading.Thread):
                         
             self.task_queue.task_done()
         self.logger.info(self.getName() + ' finished tasks and exit.')
-    
-    def extract_text(self,soup):
-        '''
-        extract all text on html body in given html page.
-        '''
-        if getattr(soup,'body'):
-            text = ' '.join([_ for _ in soup.body(text=True)])
-            return text#.encode(soup.originalEncoding)
-    
+        
     def is_page_has_keyword(self,text,default_occurrence_number=1):
         '''
         if key word appears one time in text, the text is treat as a page satisfied key word.
@@ -71,14 +63,13 @@ class Crawler(threading.Thread):
         
         try:
             self.context = safe_decode(urllib2.urlopen(url.encode('UTF-8')).read())
-            #self.logger.error('conecxt----')
-            #self.logger.error(self.context.encode('UTF-8'))
         except:
             self.logger.error('can not open the ' + url)
             
         if self.context:
+            # analyse the current page whether includes keyword or not,if yes,put (url,compress text) into result_queue.
             if self.is_page_has_keyword(self.context.encode('UTF-8')):
-                self.result_queue.put((url,self.context))
+                self.result_queue.put((url,compress_text(self.context.encode('UTF-8'))))
                 
             try:
                 soup = BeautifulSoup.BeautifulSoup(self.context)
@@ -86,12 +77,6 @@ class Crawler(threading.Thread):
                     return 
             except:
                 return
-            
-            # analyse the current page whether includes keyword or not,if yes,put (url,compress text) into result_queue.
-            #page_text = self.extract_text(soup)
-            #if page_text and self.is_page_has_keyword(page_text):
-                ##self.result_queue.put((url,compress_text(page_text)))
-                #self.result_queue.put((url,page_text))
                 
             # if depth >= self.depth, namely the child page needn't be analysed.
             if depth >= self.depth:
@@ -124,7 +109,7 @@ if __name__ == '__main__':
     task = Queue.Queue()
     result = Queue.Queue()
     task.put(('http://www.sina.com.cn',0))
-    crawler = Crawler(task,result,[],'Rights',1,logger)
+    crawler = Crawler(task,result,[],'Right',1,logger)
     task.join()
     print 'task done.'
     while True:
@@ -133,4 +118,3 @@ if __name__ == '__main__':
         res = result.get()
         print res
         result.task_done()
-    exit()

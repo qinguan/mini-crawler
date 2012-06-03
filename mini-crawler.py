@@ -13,8 +13,8 @@ def start_program():
     url = options.url
     
     if options.depth == None:
-        print 'plz input the depth of page!'
-        return
+        depth = 2
+        #print 'plz input the depth of page!'
     depth = int(options.depth)
     
     if options.threadnumber == None:
@@ -54,6 +54,8 @@ def start_program():
         testself = True
     
     logger = create_log(loglevel,logfile)
+    if testself == True:
+        CrawlerManager('http://www.google.com',keyword,2,logger,dbfile,threadnumber).do_tasks()
     CrawlerManager(url,keyword,depth,logger,dbfile,threadnumber).do_tasks()
     
 if __name__ == '__main__':

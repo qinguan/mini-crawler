@@ -67,9 +67,6 @@ if __name__ == '__main__':
     print dbOp.insert_url('http://www.baidu.com','baidu')
     print dbOp.insert_url('http://www.baidu.com1','baidu1')
     dbOp.insert_url('http://www.baidu.com2','baidu2')
-    dbOp.insert_url('http://www.baidu.com3','baidu3')
-    dbOp.insert_url('http://www.baidu.com4','baidu4')
-    dbOp.insert_url('http://www.baidu.com5','baidu5')
     res = dbOp.query_all()
     print len(res)
     for i in res:

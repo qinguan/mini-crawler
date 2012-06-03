@@ -72,7 +72,7 @@ def extract_link_from__page(url):
     
 def set_optparse():
     '''
-    test_logging.py -u 'www.baidu.com' -d 2 -l log.txt -L 2 -n 10 -f hello.txt -k='python'
+    module_name.py -u 'www.baidu.com' -d 2 -l log.txt -L 2 -n 10 -f hello.txt -k='python'
     
     output:
     (<Values at 0x1bd21c0: {'dbfile': 'hello.txt', 'keyword': "='python'", 'threadnumber': '10', \
@@ -104,7 +104,7 @@ def compress_text(text):
 
 def decompress_text(zlib_text):
     import zlib
-    return zlib.decompress(unicode(zlib_text,'UTF-8'))
+    return zlib.decompress(zlib_text)
     
 #test:
 def test():

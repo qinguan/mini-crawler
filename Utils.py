@@ -24,7 +24,7 @@ def create_log(loglevel,logfile):
 
 def set_optparse():
     '''
-    module_name.py -u 'www.baidu.com' -d 2 -l log.txt -L 2 -n 10 -f hello.txt -k='python'
+    python module_name.py -u 'www.baidu.com' -d 2 -l logfile -L 2 -n 10 -f database.file -k='python'
     
     output:
     (<Values at 0x1bd21c0: {'dbfile': 'hello.txt', 'keyword': "='python'", 'threadnumber': '10', \
@@ -37,8 +37,9 @@ def set_optparse():
     parser.add_option('-u', '--url', action = 'store', dest = 'url', help = 'the url which the script starts from.')
     parser.add_option('-d', '--depth', action = 'store', dest = 'depth', help = 'the depth of script will dig into where the initial url_depth=0.')
     parser.add_option('-l', '--logfile', action = 'store', dest = 'logfile', help = 'a file the script log will be written into.')
-    parser.add_option('-L', '--loglevel',action = 'store', dest = 'loglevel', help = 'the level which log will be output.')
-    parser.add_option('-t', '--testself', action = 'store_true', dest = 'testself', default=False)
+    parser.add_option('-L', '--loglevel',action = 'store', dest = 'loglevel', help = 'the level which log will be output,you can use \
+    DEBUG--1,INFO--2,WARNING--3,ERROR--4,CRITICAL--5.')
+    parser.add_option('-t', '--testself', action = 'store_true', dest = 'testself', default=False, help = 'use default setting:url--www.google.com')
     parser.add_option('-n','--thread number', action = 'store', dest = 'threadnumber', help = 'the thread number which script will initialization.')
     parser.add_option('-f', '--database file', action = 'store', dest = 'dbfile', help = 'the file where sqlite databse locates.')
     parser.add_option('-k', '--key', action = 'store', dest = 'keyword', help = 'word given more attention on html page.')
