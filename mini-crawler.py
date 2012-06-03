@@ -7,6 +7,10 @@ import Queue
 
 def start_program():
     options, args = set_optparse()
+    
+    if options.testself:
+        return CrawlerManager('http://www.google.com','google',2,create_log(logging.INFO,'logfile'),'database',5).do_tasks()
+        
     if options.url == None:
         print 'plz input a seed url!'
         return
@@ -49,13 +53,8 @@ def start_program():
         print 'plz imput the key word!'
         return 
     keyword = options.keyword
-        
-    if options.testself:
-        testself = True
     
     logger = create_log(loglevel,logfile)
-    if testself == True:
-        CrawlerManager('http://www.google.com',keyword,2,logger,dbfile,threadnumber).do_tasks()
     CrawlerManager(url,keyword,depth,logger,dbfile,threadnumber).do_tasks()
     
 if __name__ == '__main__':

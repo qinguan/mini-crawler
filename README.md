@@ -16,7 +16,7 @@ Options:
 *  -h, --help            show this help message and exit
 *  -u URL, --url=URL     the url which the script starts from.
 *  -d DEPTH, --depth=DEPTH
-*                        the depth of script will dig into where the initial
+                        the depth of script will dig into where the initial
                         url_depth=0.
 *  -l LOGFILE, --logfile=LOGFILE
                         a file the script log will be written into.
