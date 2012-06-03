@@ -13,20 +13,20 @@ you can type the command under CLI to get more information:
 Usage: mini-crawler.py [options] arg1 arg2
 
 Options:
-  -h, --help            show this help message and exit
-  -u URL, --url=URL     the url which the script starts from.
-  -d DEPTH, --depth=DEPTH
-                        the depth of script will dig into where the initial
+*  -h, --help            show this help message and exit
+*  -u URL, --url=URL     the url which the script starts from.
+*  -d DEPTH, --depth=DEPTH
+*                        the depth of script will dig into where the initial
                         url_depth=0.
-  -l LOGFILE, --logfile=LOGFILE
+*  -l LOGFILE, --logfile=LOGFILE
                         a file the script log will be written into.
-  -L LOGLEVEL, --loglevel=LOGLEVEL
+*  -L LOGLEVEL, --loglevel=LOGLEVEL
                         the level which log will be output,you can use
                         DEBUG--1,INFO--2,WARNING--3,ERROR--4,CRITICAL--5.
-  -t, --testself        use default setting:url--www.google.com
-  -n THREADNUMBER, --thread number=THREADNUMBER
+*  -t, --testself        use default setting:url--www.google.com
+*  -n THREADNUMBER, --thread number=THREADNUMBER
                         the thread number which script will initialization.
-  -f DBFILE, --database file=DBFILE
+*  -f DBFILE, --database file=DBFILE
                         the file where sqlite databse locates.
-  -k KEYWORD, --key=KEYWORD
+*  -k KEYWORD, --key=KEYWORD
                         word given more attention on html page.
