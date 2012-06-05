@@ -26,7 +26,7 @@ you can type the command under CLI to get more information:
 							DEBUG--1,INFO--2,WARNING--3,ERROR--4,CRITICAL--5.
 	  -t, --testself        use default setting:url--www.google.com
 	  -n THREADNUMBER, --thread number=THREADNUMBER
-							the thread number which script will initialization.
+							the thread number which script will initialize.
 	  -f DBFILE, --database file=DBFILE
 							the file where sqlite databse locates.
 	  -k KEYWORD, --key=KEYWORD
