@@ -6,7 +6,7 @@ Hello!
 This is a simple tool to fetch specified context from the Internet.
 
 ## usage:
-python mini-crawler.py -u 'www.baidu.com' -d 2 -l logfile -L 2 -n 10 -f database.file -k='python'
+python mini-crawler.py -u www.baidu.com -d 2 -l logfile -L 2 -n 10 -f database.file -k='python'
 
 you can type the command under CLI to get more information:
 
